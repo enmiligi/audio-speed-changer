@@ -1,3 +1,3 @@
-import * as wasm from "audio-speed-changer";
+import * as wasm from "audio-speed-changer-backend";
 
 wasm.greet();
