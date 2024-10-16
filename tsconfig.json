@@ -4,8 +4,9 @@
     "noImplicitAny": true,
     "sourceMap": true,
     "module": "ES2022",
-    "target": "ES5",
+    "target": "ES6",
     "allowJs": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "types": ["@types/audioworklet"]
   }
 }
