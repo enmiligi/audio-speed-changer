@@ -4,8 +4,8 @@
   "description": "Change the speed of an audio files preserving frequencies.",
   "source": "src/index.html",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "start": "webpack-dev-server"
+    "build": "parcel build",
+    "start": "parcel"
   },
   "repository": {
     "type": "git",
