@@ -1,3 +1,16 @@
-import * as wasm from "audio-speed-changer-backend";
+import init, { greet } from "audio-speed-changer-backend";
+import { setupAudio } from "./setupAudio";
 
-wasm.greet();
+init({}).then((wasm) => {
+  console.log(wasm);
+
+  (document.getElementById("audio-file") as HTMLInputElement).addEventListener(
+    "change",
+    function (ev) {
+      let file = this.files[0];
+      console.log(file);
+      let audioDiv = document.getElementById("audio-div");
+      setupAudio(file);
+    },
+  );
+});
