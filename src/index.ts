@@ -1,4 +1,4 @@
-import init, { greet } from "audio-speed-changer-backend";
+import init from "audio-speed-changer-backend";
 import { setupAudio } from "./setupAudio";
 
 init({}).then((wasm) => {
