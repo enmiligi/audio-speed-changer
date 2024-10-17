@@ -1,6 +1,12 @@
 import SpeedChangeNode from "./SpeedChangeNode";
 
+import toWav from "audiobuffer-to-wav";
+
 export async function setupAudio(audioFile: Blob) {
+  let loading = document.getElementById("loading") as HTMLDivElement;
+  let ui = document.getElementById("ui") as HTMLSpanElement;
+  loading.hidden = false;
+  ui.hidden = true;
   const ctx = new AudioContext();
   var reader = new FileReader();
   reader.onload = function (ev) {
@@ -32,15 +38,42 @@ export async function setupAudio(audioFile: Blob) {
 
         soundSource.connect(node).connect(offlineCtx.destination);
 
+        soundSource.start();
+        let resultBuffer = await offlineCtx.startRendering();
+
+        loading.hidden = true;
+        ui.hidden = false;
+
+        let wav = toWav(buffer) as ArrayBuffer;
+        let blob = new Blob([wav], { type: "audio/wav" });
+        let url = URL.createObjectURL(blob);
+
+        let fileName = document.getElementById("file-name") as HTMLInputElement;
+
+        let downloadLinkTag = document.getElementById(
+          "download-link",
+        ) as HTMLSpanElement;
+        let a = document.createElement("a") as HTMLAnchorElement;
+        a.href = url;
+        a.download = "output.wav";
+        a.text = "Download";
+        downloadLinkTag.appendChild(a);
+
+        fileName.addEventListener("input", (ev) => {
+          if (fileName.value == "") {
+            a.download = "output.wav";
+          } else {
+            a.download = fileName.value;
+          }
+        });
+
         (
           document.getElementById("audio-start-button") as HTMLButtonElement
         ).addEventListener("click", async () => {
-          soundSource.start();
-          let buffer = await offlineCtx.startRendering();
-          let ctxSrc = ctx.createBufferSource();
-          ctxSrc.buffer = buffer;
-          ctxSrc.connect(ctx.destination);
-          ctxSrc.start();
+          let src = ctx.createBufferSource();
+          src.buffer = resultBuffer;
+          src.connect(ctx.destination);
+          src.start();
         });
       });
   };

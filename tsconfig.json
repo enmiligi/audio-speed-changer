@@ -7,6 +7,7 @@
     "target": "ES6",
     "allowJs": true,
     "moduleResolution": "node",
-    "types": ["@types/audioworklet"]
+    "types": ["@types/audioworklet"],
+    "allowSyntheticDefaultImports": true
   }
 }

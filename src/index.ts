@@ -9,7 +9,6 @@ init({}).then((wasm) => {
     function (ev) {
       let file = this.files[0];
       console.log(file);
-      let audioDiv = document.getElementById("audio-div");
       setupAudio(file);
     },
   );

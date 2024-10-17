@@ -5,8 +5,18 @@
         <title>Hello wasm-pack!</title>
     </head>
     <body>
-        <input type="file" id="audio-file" />
-        <button id="audio-start-button">Start Audio</button>
+        <div><input type="file" id="audio-file" /></div>
+        <div id="loading" hidden>Loading...</div>
+        <span hidden id="ui">
+            <div>
+                <button id="audio-start-button">Start Audio</button>
+            </div>
+            <div>
+                <label for="file-name">Choose a filename: </label>
+                <input id="file-name" placeholder="output.wav" />
+                <span id="download-link"></span>
+            </div>
+        </span>
         <noscript>
             This page contains webassembly and javascript content, please enable
             javascript in your browser.
