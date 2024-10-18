@@ -4,7 +4,7 @@ import toWav from "audiobuffer-to-wav";
 
 export async function setupAudio(audioFile: Blob) {
   let loading = document.getElementById("loading") as HTMLDivElement;
-  let ui = document.getElementById("ui") as HTMLSpanElement;
+  let ui = document.getElementById("ui") as HTMLDivElement;
   loading.hidden = false;
   ui.hidden = true;
   const ctx = new AudioContext();
@@ -57,6 +57,7 @@ export async function setupAudio(audioFile: Blob) {
         a.href = url;
         a.download = "output.wav";
         a.text = "Download";
+        a.classList.add("button-like");
         downloadLinkTag.appendChild(a);
 
         fileName.addEventListener("input", (ev) => {

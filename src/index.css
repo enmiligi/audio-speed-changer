@@ -1,0 +1,44 @@
+html {
+    font-family: "Liberation Serif", "Times New Roman", serif;
+    background-color: white;
+}
+
+h1 {
+    font-family: "Liberation Sans", "Arial", sans-serif;
+    text-align: center;
+}
+
+#file-selector {
+    margin: 4 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+.button-like,
+button {
+    background-color: #202020;
+    color: white;
+    border-radius: 6;
+    padding: 2 4;
+    font-size: 16;
+    font-family: "Liberation Serif", "Times New Roman", serif;
+    border: 2 black solid;
+}
+
+.button-like:not(:hover),
+button:not(:hover) {
+    box-shadow: 0 1 0 1 lightgray;
+}
+
+.button-like:hover,
+button:hover {
+    box-shadow: 0 1 2 2 darkgrey;
+}
+
+.button-like:active,
+button:active {
+    opacity: 0.8;
+    border: 2 #505050 inset;
+}

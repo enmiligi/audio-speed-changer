@@ -2,13 +2,19 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Hello wasm-pack!</title>
+        <title>Audio Speed Changer</title>
+        <link rel="stylesheet" href="index.css" />
     </head>
     <body>
-        <div><input type="file" id="audio-file" /></div>
+        <h1>Audio Speed Changer</h1>
+        <div id="file-selector">
+            <input type="file" id="audio-file" hidden />
+            <label for="audio-file" class="button-like">Datei Auswählen</label>
+            <span id="file-chosen">Keine Datei ausgewählt</span>
+        </div>
         <div id="loading" hidden>Loading...</div>
-        <span hidden id="ui">
-            <div>
+        <div hidden id="ui">
+            <div id="start-button-div">
                 <button id="audio-start-button">Start Audio</button>
             </div>
             <div>
@@ -16,7 +22,7 @@
                 <input id="file-name" placeholder="output.wav" />
                 <span id="download-link"></span>
             </div>
-        </span>
+        </div>
         <noscript>
             This page contains webassembly and javascript content, please enable
             javascript in your browser.
