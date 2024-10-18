@@ -5,7 +5,7 @@
   "source": "src/index.html",
   "scripts": {
     "prebuild": "rm -rf dist && cd backend && wasm-pack build -t web",
-    "build": "parcel build --no-content-hash --no-cache --no-source-maps",
+    "build": "parcel build --no-content-hash --no-cache --no-source-maps --public-url ./",
     "start": "parcel"
   },
   "repository": {
