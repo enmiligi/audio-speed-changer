@@ -50,15 +50,15 @@ export async function setupAudio(audioFile: Blob) {
 
         let fileName = document.getElementById("file-name") as HTMLInputElement;
 
-        let downloadLinkTag = document.getElementById(
-          "download-link",
-        ) as HTMLSpanElement;
+        let downloadButton = document.getElementById(
+          "download",
+        ) as HTMLButtonElement;
         let a = document.createElement("a") as HTMLAnchorElement;
         a.href = url;
         a.download = "output.wav";
-        a.text = "Download";
-        a.classList.add("button-like");
-        downloadLinkTag.appendChild(a);
+        downloadButton.addEventListener("click", () => {
+          a.click();
+        });
 
         fileName.addEventListener("input", (ev) => {
           if (fileName.value == "") {

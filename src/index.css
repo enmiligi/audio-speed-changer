@@ -1,6 +1,7 @@
 html {
     font-family: "Liberation Serif", "Times New Roman", serif;
     background-color: white;
+    font-size: 16;
 }
 
 h1 {
@@ -25,16 +26,17 @@ button {
     font-size: 16;
     font-family: "Liberation Serif", "Times New Roman", serif;
     border: 2 black solid;
+    cursor: pointer;
 }
 
 .button-like:not(:hover),
 button:not(:hover) {
-    box-shadow: 0 1 0 1 lightgray;
+    box-shadow: 1 1 0 1 lightgray;
 }
 
 .button-like:hover,
 button:hover {
-    box-shadow: 0 1 2 2 darkgrey;
+    box-shadow: 1 1 2 2 darkgrey;
 }
 
 .button-like:active,
