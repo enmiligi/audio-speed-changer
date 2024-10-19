@@ -41,6 +41,6 @@ button:hover {
 
 .button-like:active,
 button:active {
-    opacity: 0.8;
+    filter: brightness(80%);
     border: 2 #505050 inset;
 }
