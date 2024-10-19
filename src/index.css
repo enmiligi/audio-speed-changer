@@ -44,3 +44,7 @@ button:active {
     filter: brightness(80%);
     border: 2 #505050 inset;
 }
+
+canvas {
+    width: 100%;
+}

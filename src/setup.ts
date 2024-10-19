@@ -2,9 +2,68 @@ import SpeedChangeNode from "./SpeedChangeNode";
 
 import toWav from "audiobuffer-to-wav";
 
-export async function setup(audioFile: Blob) {
-  let loading = document.getElementById("loading") as HTMLDivElement;
-  let ui = document.getElementById("ui") as HTMLDivElement;
+let loading = document.getElementById("loading") as HTMLDivElement;
+let ui = document.getElementById("ui") as HTMLDivElement;
+let fileName = document.getElementById("file-name") as HTMLInputElement;
+
+let downloadButton = document.getElementById("download") as HTMLButtonElement;
+let startButton = document.getElementById(
+  "audio-start-button",
+) as HTMLButtonElement;
+
+let canvas = document.getElementById("audio-canvas") as HTMLCanvasElement;
+let canvasCtx = canvas.getContext("2d");
+
+let ended = false;
+
+function startVisualize(analyser: AnalyserNode) {
+  const CANVAS_WIDTH = (canvas.width = window.innerWidth);
+  const CANVAS_HEIGHT = (canvas.height = CANVAS_WIDTH / 3);
+  const timeDomainArray = new Float32Array(analyser.fftSize);
+  const frequencyArray = new Float32Array(analyser.frequencyBinCount);
+
+  canvasCtx.lineWidth = (CANVAS_WIDTH / analyser.fftSize) * 0.6;
+
+  function draw() {
+    canvasCtx.fillStyle = "white";
+    canvasCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    analyser.getFloatTimeDomainData(timeDomainArray);
+    analyser.getFloatFrequencyData(frequencyArray);
+
+    canvasCtx.strokeStyle = "black";
+    canvasCtx.beginPath();
+    for (let i = 0; i < analyser.fftSize; i++) {
+      canvasCtx.moveTo(
+        i * (CANVAS_WIDTH / analyser.fftSize),
+        CANVAS_HEIGHT / 2,
+      );
+      canvasCtx.lineTo(
+        i * (CANVAS_WIDTH / analyser.fftSize),
+        CANVAS_HEIGHT / 2 - (timeDomainArray[i] / 2) * CANVAS_HEIGHT,
+      );
+    }
+    canvasCtx.stroke();
+
+    for (let i = 0; i < analyser.frequencyBinCount; i++) {
+      canvasCtx.fillStyle = "#ff300080";
+      canvasCtx.fillRect(
+        i * (CANVAS_WIDTH / analyser.frequencyBinCount),
+        CANVAS_HEIGHT,
+        CANVAS_WIDTH / analyser.frequencyBinCount,
+        -(
+          (frequencyArray[i] - analyser.minDecibels - 10) /
+          (analyser.maxDecibels + 10 - analyser.minDecibels)
+        ) * CANVAS_HEIGHT,
+      );
+    }
+
+    if (!ended) requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+}
+
+export async function setup(audioFile: File) {
   loading.hidden = false;
   ui.hidden = true;
   const ctx = new AudioContext();
@@ -14,7 +73,6 @@ export async function setup(audioFile: Blob) {
     ctx
       .decodeAudioData(ev.target.result as ArrayBuffer)
       .then(async function (buffer) {
-        console.log(buffer);
         let offlineCtx = new OfflineAudioContext(
           buffer.numberOfChannels,
           buffer.length,
@@ -48,11 +106,6 @@ export async function setup(audioFile: Blob) {
         let blob = new Blob([wav], { type: "audio/wav" });
         let url = URL.createObjectURL(blob);
 
-        let fileName = document.getElementById("file-name") as HTMLInputElement;
-
-        let downloadButton = document.getElementById(
-          "download",
-        ) as HTMLButtonElement;
         let a = document.createElement("a") as HTMLAnchorElement;
         a.href = url;
         a.download = "output.wav";
@@ -68,13 +121,20 @@ export async function setup(audioFile: Blob) {
           }
         });
 
-        (
-          document.getElementById("audio-start-button") as HTMLButtonElement
-        ).addEventListener("click", async () => {
+        startButton.addEventListener("click", async () => {
+          ended = false;
           let src = ctx.createBufferSource();
+          let analyser = ctx.createAnalyser();
+          analyser.fftSize = 8192;
+
+          analyser.smoothingTimeConstant = 0;
           src.buffer = resultBuffer;
-          src.connect(ctx.destination);
+          src.connect(analyser).connect(ctx.destination);
+          startVisualize(analyser);
           src.start();
+          src.onended = () => {
+            ended = true;
+          };
         });
       });
   };
