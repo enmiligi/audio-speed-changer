@@ -2,7 +2,7 @@ import SpeedChangeNode from "./SpeedChangeNode";
 
 import toWav from "audiobuffer-to-wav";
 
-export async function setupAudio(audioFile: Blob) {
+export async function setup(audioFile: Blob) {
   let loading = document.getElementById("loading") as HTMLDivElement;
   let ui = document.getElementById("ui") as HTMLDivElement;
   loading.hidden = false;

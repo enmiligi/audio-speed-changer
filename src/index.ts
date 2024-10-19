@@ -1,5 +1,5 @@
 import init from "audio-speed-changer-backend";
-import { setupAudio } from "./setupAudio";
+import { setup } from "./setup";
 
 let file_chosen = document.getElementById("file-chosen") as HTMLSpanElement;
 
