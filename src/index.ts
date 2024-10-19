@@ -14,7 +14,7 @@ init({}).then((wasm) => {
       file_chosen.textContent = file.name + " ausgewählt";
 
       console.log(file);
-      setupAudio(file);
+      setup(file);
     },
   );
 });
