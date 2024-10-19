@@ -1,33 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Audio Speed Changer</title>
-    <link rel="stylesheet" href="index.css" />
-  </head>
-  <body>
-    <h1>Audio Speed Changer</h1>
-    <div id="file-selector">
-      <input type="file" id="audio-file" hidden />
-      <label for="audio-file" class="button-like">Datei Auswählen</label>
-      <span id="file-chosen">Keine Datei ausgewählt</span>
-    </div>
-    <div id="loading" hidden>Loading...</div>
-    <div hidden id="ui">
-      <canvas id="audio-canvas"></canvas>
-      <div id="start-button-div">
-        <button id="audio-start-button">Start Audio</button>
-      </div>
-      <div>
-        <label for="file-name">Choose a filename: </label>
-        <input id="file-name" placeholder="output.wav" />
-        <button id="download">Download output file</button>
-      </div>
-    </div>
-    <noscript>
-      This page contains webassembly and javascript content, please enable
-      javascript in your browser.
-    </noscript>
-    <script src="./bootstrap.ts"></script>
-  </body>
+    <head>
+        <meta charset="utf-8" />
+        <title>Audio Speed Changer</title>
+        <link rel="stylesheet" href="index.css" />
+    </head>
+    <body>
+        <h1>Audio Speed Changer</h1>
+        <div id="file-selector">
+            <input type="file" id="audio-file" hidden />
+            <label for="audio-file" class="button-like">Datei Auswählen</label>
+            <span id="file-chosen">Keine Datei ausgewählt</span>
+        </div>
+        <div id="loading" hidden>Loading...</div>
+        <div hidden id="ui">
+            <canvas id="audio-canvas" width="0" height="0"></canvas>
+            <div id="start-button-div">
+                <button id="audio-start-button">Start Audio</button>
+            </div>
+            <div>
+                <label for="file-name">Choose a filename: </label>
+                <input id="file-name" placeholder="output.wav" />
+                <button id="download">Download output file</button>
+            </div>
+        </div>
+        <noscript>
+            This page contains webassembly and javascript content, please enable
+            javascript in your browser.
+        </noscript>
+        <script src="./bootstrap.ts"></script>
+    </body>
 </html>
