@@ -125,7 +125,7 @@ export async function setup(audioFile: File) {
           ended = false;
           let src = ctx.createBufferSource();
           let analyser = ctx.createAnalyser();
-          analyser.fftSize = 8192;
+          analyser.fftSize = 32768;
 
           analyser.smoothingTimeConstant = 0;
           src.buffer = resultBuffer;
