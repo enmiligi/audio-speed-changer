@@ -1,6 +1,8 @@
 import SpeedChangeNode from "./SpeedChangeNode";
-
+import { initSync } from "audio-speed-changer-backend";
+import mod from "audio-speed-changer-backend/audio_speed_changer_backend_bg.wasm";
 import toWav from "audiobuffer-to-wav";
+import { SpeedChangeEvent } from "./SpeedChangeEvent";
 
 let loading = document.getElementById("loading") as HTMLDivElement;
 let ui = document.getElementById("ui") as HTMLDivElement;
@@ -83,7 +85,7 @@ export async function setup(audioFile: File) {
         soundSource.buffer = buffer;
 
         try {
-          await offlineCtx.audioWorklet.addModule(
+          await ctx.audioWorklet.addModule(
             new URL("./SpeedChangeProcessor.ts", import.meta.url),
           );
         } catch (e) {
@@ -92,9 +94,33 @@ export async function setup(audioFile: File) {
           );
         }
 
-        const node = new SpeedChangeNode(offlineCtx, "SpeedChangeProcessor");
+        let options = AudioWorkletNode;
+
+        let mod = await WebAssembly.compileStreaming(
+          fetch(
+            new URL(
+              "../backend/pkg/audio_speed_changer_backend_bg.wasm",
+              import.meta.url,
+            ),
+          ),
+        );
+
+        /* const node = new SpeedChangeNode(offlineCtx, "SpeedChangeProcessor", {
+          processorOptions: [mod],
+        });
+        node.init();
 
         soundSource.connect(node).connect(offlineCtx.destination);
+
+        soundSource.start();
+        let resultBuffer = await offlineCtx.startRendering(); */
+
+        const node = new SpeedChangeNode(ctx, "SpeedChangeProcessor", {
+          processorOptions: [mod],
+        });
+        node.init();
+
+        soundSource.connect(offlineCtx.destination);
 
         soundSource.start();
         let resultBuffer = await offlineCtx.startRendering();
@@ -129,7 +155,7 @@ export async function setup(audioFile: File) {
 
           analyser.smoothingTimeConstant = 0;
           src.buffer = resultBuffer;
-          src.connect(analyser).connect(ctx.destination);
+          src.connect(node).connect(analyser).connect(ctx.destination);
           startVisualize(analyser);
           src.start();
           src.onended = () => {

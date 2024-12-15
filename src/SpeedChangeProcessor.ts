@@ -1,10 +1,25 @@
+import init, {
+  InitOutput,
+  initSync,
+  Processor,
+} from "audio-speed-changer-backend";
+
+import { SpeedChangeEvent } from "./SpeedChangeEvent";
+
 class SpeedChangeProcessor extends AudioWorkletProcessor {
-  constructor() {
+  processor: Processor;
+
+  constructor(options: any) {
     super();
-    this.port.onmessage = this.onmessage;
+    this.port.onmessage = async (msg) => {
+      this.onmessage(msg);
+    };
+    let [module] = options.processorOptions;
+    let res = initSync({ module });
+    this.processor = Processor.new(1.0);
   }
 
-  onmessage(msg: MessageEvent) {}
+  async onmessage(msg: MessageEvent) {}
 
   process(
     inputList: Float32Array[][],
@@ -19,10 +34,8 @@ class SpeedChangeProcessor extends AudioWorkletProcessor {
       const channelCount = Math.min(input.length, output.length);
 
       for (let channelNum = 0; channelNum < channelCount; channelNum++) {
-        input[channelNum].forEach((sample, i) => {
-          // Manipulate the sample
-          output[channelNum][i] = sample;
-        });
+        this.processor.process(input[channelNum], output[channelNum]);
+        console.log(output[channelNum]);
       }
     }
 
