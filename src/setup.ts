@@ -67,6 +67,7 @@ function startVisualize(analyser: AnalyserNode) {
 
 export async function setup(audioFile: File) {
   let shift = 1.0;
+  let lengthMult = 1.0;
   loading.hidden = false;
   ui.hidden = true;
   const ctx = new AudioContext();
@@ -116,32 +117,6 @@ export async function setup(audioFile: File) {
         soundSource.start();
         let resultBuffer = await offlineCtx.startRendering(); */
 
-        const node = new SpeedChangeNode(ctx, "SpeedChangeProcessor", {
-          processorOptions: [mod],
-        });
-        node.init();
-
-        node.port.postMessage({
-          type: SpeedChangeEvent.InitWASM,
-          shift,
-        });
-
-        let semitones = document.getElementById(
-          "semitones",
-        ) as HTMLInputElement;
-
-        let semitonesDisplay = document.getElementById(
-          "semitones-display",
-        ) as HTMLSpanElement;
-
-        semitones.addEventListener("change", (_) => {
-          node.port.postMessage({
-            type: SpeedChangeEvent.SetShift,
-            shift: 2 ** (semitones.valueAsNumber / 12),
-          });
-          semitonesDisplay.textContent = semitones.value;
-        });
-
         soundSource.connect(offlineCtx.destination);
 
         soundSource.start();
@@ -160,6 +135,50 @@ export async function setup(audioFile: File) {
         downloadButton.addEventListener("click", () => {
           a.click();
         });
+        const node = new SpeedChangeNode(ctx, "SpeedChangeProcessor", {
+          processorOptions: [mod],
+        });
+        node.init();
+
+        node.port.postMessage({
+          type: SpeedChangeEvent.InitWASM,
+          shift,
+        });
+
+        let src: AudioBufferSourceNode = null;
+
+        let semitones = document.getElementById(
+          "semitones",
+        ) as HTMLInputElement;
+
+        let semitonesDisplay = document.getElementById(
+          "semitones-display",
+        ) as HTMLSpanElement;
+
+        semitones.addEventListener("change", (_) => {
+          shift = 2 ** (semitones.valueAsNumber / 12);
+          node.port.postMessage({
+            type: SpeedChangeEvent.SetShift,
+            shift: shift * lengthMult,
+          });
+          semitonesDisplay.textContent = semitones.value;
+        });
+
+        let length = document.getElementById("length") as HTMLInputElement;
+
+        let lengthDisplay = document.getElementById(
+          "length-display",
+        ) as HTMLSpanElement;
+
+        length.addEventListener("change", (_) => {
+          lengthMult = length.valueAsNumber;
+          node.port.postMessage({
+            type: SpeedChangeEvent.SetShift,
+            shift: shift * lengthMult,
+          });
+          lengthDisplay.textContent = length.value;
+          if (src) src.playbackRate.value = 1 / length.valueAsNumber;
+        });
 
         fileName.addEventListener("input", (ev) => {
           if (fileName.value == "") {
@@ -172,7 +191,7 @@ export async function setup(audioFile: File) {
         startButton.addEventListener("click", async () => {
           node.port.postMessage({ type: SpeedChangeEvent.Reset });
           ended = false;
-          let src = ctx.createBufferSource();
+          src = ctx.createBufferSource();
           let analyser = ctx.createAnalyser();
           analyser.fftSize = 32768;
 
@@ -180,9 +199,14 @@ export async function setup(audioFile: File) {
           src.buffer = resultBuffer;
           src.connect(node).connect(analyser).connect(ctx.destination);
           startVisualize(analyser);
+          src.playbackRate.value = 1 / length.valueAsNumber;
+
           src.start();
           src.onended = () => {
             ended = true;
+            src.disconnect();
+            node.disconnect();
+            analyser.disconnect();
           };
         });
       });
