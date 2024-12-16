@@ -16,28 +16,27 @@ class SpeedChangeProcessor extends AudioWorkletProcessor {
     };
     let [module] = options.processorOptions;
     let res = initSync({ module });
-    this.processor = Processor.new(1.0);
   }
 
-  async onmessage(msg: MessageEvent) {}
+  async onmessage(msg: MessageEvent) {
+    if (msg.data.type == SpeedChangeEvent.InitWASM) {
+      this.processor = Processor.new(msg.data.shift);
+    } else if (msg.data.type == SpeedChangeEvent.SetShift) {
+      this.processor.change_shift(msg.data.shift);
+    } else if (msg.data.type == SpeedChangeEvent.Reset) {
+      this.processor.reset();
+    }
+  }
 
   process(
     inputList: Float32Array[][],
     outputList: Float32Array[][],
     parameters: Record<string, Float32Array>,
   ): boolean {
-    const sourceLimit = Math.min(inputList.length, outputList.length);
-
-    for (let inputNum = 0; inputNum < sourceLimit; inputNum++) {
-      const input = inputList[inputNum];
-      const output = outputList[inputNum];
-      const channelCount = Math.min(input.length, output.length);
-
-      for (let channelNum = 0; channelNum < channelCount; channelNum++) {
-        this.processor.process(input[channelNum], output[channelNum]);
-        console.log(output[channelNum]);
-      }
-    }
+    if (inputList.length < 1 || inputList[0].length < 1) return true;
+    console.log(this.processor.process(inputList[0][0], outputList[0][0]));
+    console.log(inputList[0][0]);
+    console.log(outputList[0][0]);
 
     return true;
   }

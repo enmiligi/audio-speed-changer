@@ -1,1 +1,5 @@
-export enum SpeedChangeEvent {}
+export enum SpeedChangeEvent {
+  InitWASM,
+  SetShift,
+  Reset,
+}

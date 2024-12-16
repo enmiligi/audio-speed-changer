@@ -66,6 +66,7 @@ function startVisualize(analyser: AnalyserNode) {
 }
 
 export async function setup(audioFile: File) {
+  let shift = 1.0;
   loading.hidden = false;
   ui.hidden = true;
   const ctx = new AudioContext();
@@ -120,6 +121,27 @@ export async function setup(audioFile: File) {
         });
         node.init();
 
+        node.port.postMessage({
+          type: SpeedChangeEvent.InitWASM,
+          shift,
+        });
+
+        let semitones = document.getElementById(
+          "semitones",
+        ) as HTMLInputElement;
+
+        let semitonesDisplay = document.getElementById(
+          "semitones-display",
+        ) as HTMLSpanElement;
+
+        semitones.addEventListener("change", (_) => {
+          node.port.postMessage({
+            type: SpeedChangeEvent.SetShift,
+            shift: 2 ** (semitones.valueAsNumber / 12),
+          });
+          semitonesDisplay.textContent = semitones.value;
+        });
+
         soundSource.connect(offlineCtx.destination);
 
         soundSource.start();
@@ -148,6 +170,7 @@ export async function setup(audioFile: File) {
         });
 
         startButton.addEventListener("click", async () => {
+          node.port.postMessage({ type: SpeedChangeEvent.Reset });
           ended = false;
           let src = ctx.createBufferSource();
           let analyser = ctx.createAnalyser();

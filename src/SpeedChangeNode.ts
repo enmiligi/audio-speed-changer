@@ -18,9 +18,8 @@ export default class SpeedChangeNode extends AudioWorkletNode {
   }
 
   onprocessorerror = function (err: Event) {
-    console.error(
-      `An error from AudioWorkletProcessor.process() occurred: ${err}`,
-    );
+    console.error(`An error from AudioWorkletProcessor.process() occurred`);
+    console.log(err);
   };
 
   onmessage = async function (event: MessageEvent) {
